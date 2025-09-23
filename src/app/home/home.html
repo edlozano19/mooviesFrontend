@@ -1,0 +1,10 @@
+<div class="content-card">
+    <h1>{{welcomeMessage()}}</h1>
+
+    @if (isLoggedIn() && userName()) {
+        <p>You are logged in as {{ userName() }}</p>
+    }
+    @else {
+        <p>Please log in to access personalized features</p>
+    }
+</div>
