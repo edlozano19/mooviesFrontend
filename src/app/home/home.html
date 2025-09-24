@@ -1,10 +1,12 @@
-<div class="content-card">
+<div>
     <h1>{{welcomeMessage()}}</h1>
 
-    @if (isLoggedIn() && userName()) {
+    @if (isLoggedIn()) {
         <p>You are logged in as {{ userName() }}</p>
+        <button (click)="logout()" class="logout-btn">Logout</button>
     }
     @else {
         <p>Please log in to access personalized features</p>
+        <button (click)="testLogin()" class="login-btn">Test Login</button>
     }
 </div>
