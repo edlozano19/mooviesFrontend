@@ -1,0 +1,137 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
+import { Observable, catchError, map, of } from 'rxjs';
+import { environment } from '../../environments/environment';
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: UserRole;
+}
+
+export interface LoginRequest {
+  usernameOrEmail: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  user?: User;
+  error?: string;
+  token?: string;
+}
+
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN'
+}
+
+export interface BackendLoginResponse {
+  token: string;
+  type: string;
+  userId: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class Auth {
+  private isLoggedIn = signal(false);
+  private currentUser = signal<User | undefined>(undefined);
+  private authToken = signal<string | null>(null);
+  private apiUrl = environment.apiUrl;
+
+  constructor(private http: HttpClient) {
+    this.checkStoredAuth();
+  }
+
+  login(credentials: LoginRequest): Observable<LoginResponse> {
+    console.log('Login request:', credentials);
+    return this.http.post<BackendLoginResponse>(`${this.apiUrl}/auth/login`, credentials)
+      .pipe(
+        map((response: BackendLoginResponse) => {
+          const user: User = {
+            id: response.userId,
+            username: response.username,
+            email: response.email,
+            role: response.role,
+            firstName: response.firstName,
+            lastName: response.lastName
+          };
+
+          this.isLoggedIn.set(true);
+          this.currentUser.set(user);
+          this.authToken.set(response.token);
+
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('authToken', response.token);
+
+          return { success: true, user: user, token: response.token };
+        }),
+        catchError((error: HttpErrorResponse) => {
+          let errorMessage = 'Login failed';
+
+          if (error.status === 401) {
+            errorMessage = 'Invalid username or password';
+          }
+          else if (error.status === 0) {
+            errorMessage = 'Cannot connect to server';
+          }
+          else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          return of({ success: false, error: errorMessage });
+        })
+      );
+  }
+
+  logout(): void {
+    this.isLoggedIn.set(false);
+    this.currentUser.set(undefined);
+    this.authToken.set(null);
+
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
+  }
+
+  getIsLoggedIn() {
+    return this.isLoggedIn();
+  }
+
+  getCurrentUser() {
+    return this.currentUser();
+  }
+
+  getAuthToken() {
+     return this.authToken();
+  }
+
+  private checkStoredAuth() {
+    const storedLogin = localStorage.getItem('isLoggedIn');
+    const storedUser = localStorage.getItem('currentUser');
+    const storedToken = localStorage.getItem('authToken');
+
+    if (storedLogin === 'true' && storedUser && storedToken) {
+      try {
+        const user = JSON.parse(storedUser);
+        this.isLoggedIn.set(true);
+        this.currentUser.set(user);
+        this.authToken.set(storedToken);
+      } catch (error) {
+        this.logout();
+      }
+    }
+  }
+  
+}
