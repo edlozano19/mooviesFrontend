@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { Auth } from '../core/auth';
 
 @Component({
@@ -7,33 +7,30 @@ import { Auth } from '../core/auth';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnInit {
-  welcomeMessage = signal(`Welcome to Moovies!`);
-  isLoggedIn = signal(false);
-  userName = signal<string | undefined>(undefined);
-
+export class Home {
   constructor(private authService: Auth){}
-  
-  ngOnInit(): void {
-    this.updateWelcomeMessage();
-  }
 
-  updateWelcomeMessage(): void {
-    const currentUser = this.authService.getCurrentUser();
-    this.isLoggedIn.set(this.authService.getIsLoggedIn());
-    
-    if (this.isLoggedIn() && currentUser) {
-      this.userName.set(`${currentUser.firstName} ${currentUser.lastName}`);
-      this.welcomeMessage.set(`Welcome back, ${currentUser.firstName}!`);
+  isLoggedIn = computed(() => this.authService.getIsLoggedIn());
+  currentUser = computed(() => this.authService.getCurrentUser());
+
+  userName = computed(() => {
+    const user = this.currentUser();
+    return user ? `${user.firstName} ${user.lastName}` : undefined;
+  });
+
+  welcomeMessage = computed(() => {
+    const user = this.currentUser();
+    const loggedIn = this.isLoggedIn();
+
+    if (loggedIn && user) {
+      return `Welcome back, ${user.firstName}!`;
     }
     else {
-      this.userName.set(undefined);
-      this.welcomeMessage.set(`Welcome to Moovies!`);
+      return `Welcome to Moovies!`;
     }
-  }
+  });
 
   logout(): void {
     this.authService.logout();
-    this.updateWelcomeMessage();
   }
 }

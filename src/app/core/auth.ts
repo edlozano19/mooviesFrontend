@@ -40,6 +40,32 @@ export interface BackendLoginResponse {
   role: UserRole;
 }
 
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export interface BackendRegisterResponse {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  role: UserRole;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  user?: BackendRegisterResponse;
+  error?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -82,6 +108,33 @@ export class Auth {
 
           if (error.status === 401) {
             errorMessage = 'Invalid username or password';
+          }
+          else if (error.status === 0) {
+            errorMessage = 'Cannot connect to server';
+          }
+          else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          return of({ success: false, error: errorMessage });
+        })
+      );
+  }
+
+  register(request: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<BackendRegisterResponse>(`${this.apiUrl}/auth/register`, request)
+      .pipe(
+        map((response: BackendRegisterResponse) => {
+          return { success: true, user: response };
+        }),
+        catchError((error: HttpErrorResponse) => {
+          let errorMessage = 'Registration failed';
+
+          if (error.status === 409) {
+            errorMessage = 'Username or email already exists';
+          }
+          else if (error.status === 400) {
+            errorMessage = 'Invalid request';
           }
           else if (error.status === 0) {
             errorMessage = 'Cannot connect to server';

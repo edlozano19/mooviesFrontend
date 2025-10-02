@@ -3,7 +3,6 @@
 
     @if (isLoggedIn()) {
         <p>You are logged in as {{ userName() }}</p>
-        <button (click)="logout()" class="logout-btn">Logout</button>
     }
     @else {
         <p>Please log in to access personalized features</p>
