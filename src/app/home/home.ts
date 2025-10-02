@@ -32,17 +32,6 @@ export class Home implements OnInit {
     }
   }
 
-  testLogin(): void {
-    const result = this.authService.login({
-      username: 'admin',
-      password:'password'
-    });
-
-    if (result.success) {
-      this.updateWelcomeMessage();
-    }
-  }
-
   logout(): void {
     this.authService.logout();
     this.updateWelcomeMessage();

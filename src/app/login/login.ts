@@ -31,18 +31,27 @@ export class Login {
       this.errorMessage.set(null);
 
       const credentials: LoginRequest = {
-        username: this.loginForm.value.username,
+        usernameOrEmail: this.loginForm.value.username,
         password: this.loginForm.value.password
       };
 
-      const result = this.authService.login(credentials);
+      this.authService.login(credentials).subscribe({
+        next: (result) => {
+          this.isLoading.set(false);
 
-      if (result.success) {
-        this.router.navigate(['/home']);
-      }
-      else {
-        this.errorMessage.set(result.error || 'Login failed');
-      }
+          if (result.success) {
+            this.router.navigate(['/home']);
+          }
+          else {
+            this.errorMessage.set(result.error || 'Login failed');
+          }
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.errorMessage.set('An unexpected error occurred');
+          console.error('Login error:', error);
+        }
+      });
     }
     else {
       this.loginForm.markAllAsTouched();
