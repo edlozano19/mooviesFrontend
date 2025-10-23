@@ -1,5 +1,6 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { Auth } from '../core/auth';
+import { UsersService } from '../core/users.service';
 
 @Component({
   selector: 'app-home',
@@ -7,8 +8,11 @@ import { Auth } from '../core/auth';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
-  constructor(private authService: Auth){}
+export class Home implements OnInit {
+  constructor(
+    private authService: Auth,
+    private usersService: UsersService,
+  ) {}
 
   isLoggedIn = computed(() => this.authService.getIsLoggedIn());
   currentUser = computed(() => this.authService.getCurrentUser());
@@ -29,6 +33,14 @@ export class Home {
       return `Welcome to Moovies!`;
     }
   });
+
+  activeUsers = computed(() => this.usersService.getActiveUsersForDisplay());
+  activeUserCount = computed(() => this.usersService.activeUserCount());
+  isLoadingUsers = computed(() => this.usersService.getIsLoading());
+
+  ngOnInit(): void {
+    this.usersService.refreshUsers();
+  }
 
   logout(): void {
     this.authService.logout();
