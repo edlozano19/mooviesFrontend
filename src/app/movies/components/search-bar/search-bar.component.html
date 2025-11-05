@@ -1,0 +1,48 @@
+<div class="search-bar-container">
+    <div class="search-input-wrapper">
+        <input
+            type="text"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            (keyup.enter)="onSearchSubmit()"
+            (blur)="onBlur()"
+            placeholder="Search for movies..."
+            class="search-input"
+        />
+
+        <button (click)="onSearchSubmit()" class="search-button" type="button">
+            <svg xmls="http://www.w3.org/2000/svg" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+        </button>
+
+        @if (isSearching()) {
+            <div class="search-spinner"></div>
+        }
+
+        @if (showDropdown() && searchResults().length > 0) {
+            <div class="search-dropdown">
+                @for (movie of searchResults(); track movie.id) {
+                    <a
+                        [routerLink]="['/movie', movie.id]"
+                        (click)="onMovieClick()"
+                        class="search-result-item"
+                    >
+                        <div class="result-poster">
+                            <img [src]="getPosterUrl(movie.poster_path)" [alt]="movie.title">
+                        </div>
+                        <div class="result-info">
+                            <div class="result-title">{{ movie.title }}</div>
+                            <div class="result-year">{{ formatDate(movie.release_date) }}</div>
+                        </div>
+                    </a>
+                }
+
+                <button (click)="onSearchSubmit()" class="view-all-btn">
+                    View all results →
+                </button>
+            </div>
+        }
+    </div>
+</div>

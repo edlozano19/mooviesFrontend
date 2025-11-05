@@ -1,0 +1,194 @@
+.movie-details-container {
+  min-height: 100vh;
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+.loading, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.loading p {
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.error p {
+  font-size: 1.2rem;
+  color: #ef4444;
+  margin-bottom: 20px;
+}
+
+.backdrop {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.backdrop-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, #0f0f0f 100%);
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  margin-top: -100px;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+  margin-bottom: 20px;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.movie-header {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.poster img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.info h1 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.original-title {
+  color: #888;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.separator {
+  color: #555;
+}
+
+.genres {
+  color: #10b981;
+}
+
+.ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.rating-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-label {
+  color: #aaa;
+}
+
+.rating-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.vote-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.user-rating .rating-value {
+  color: #10b981;
+}
+
+.user-lists {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badge-watchlist {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.badge-watched {
+  background-color: #10b981;
+  color: white;
+}
+
+.overview h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.overview p {
+  line-height: 1.6;
+  color: #ccc;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 768px) {
+  .movie-header {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .poster {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .info h1 {
+    font-size: 2rem;
+  }
+
+  .backdrop {
+    height: 250px;
+  }
+}

@@ -25,6 +25,16 @@ export class Login {
     })
   }
 
+
+  ngOnInit(): void {
+    this.loginForm.reset();
+    this.errorMessage.set(null);
+    this.isLoading.set(false);
+
+    this.loginForm.markAsUntouched();
+    this.loginForm.markAsPristine();
+  }
+  
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading.set(true);

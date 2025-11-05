@@ -1,11 +1,47 @@
-<div>
-    <h1>{{welcomeMessage()}}</h1>
+<div class="home-container">
+    <h1>{{ welcomeMessage() }}</h1>
 
     @if (isLoggedIn()) {
         <p>You are logged in as {{ userName() }}</p>
-        <button (click)="logout()" class="logout-btn">Logout</button>
     }
     @else {
         <p>Please log in to access personalized features</p>
+    }
+
+    @if (isLoggedIn()) {
+    <div class="user-section">
+        <h2>Active Users <span class="user-count">({{ activeUserCount() }})</span></h2>
+
+        @if (isLoadingUsers()) {
+            <div class="loading">Loading users...</div>
+        }
+        @else {
+            @if (activeUsers().length > 0) {
+                <div class="users-grid">
+                    @for (user of activeUsers(); track user.id) {
+                        <div class="user-card">
+                            <div class="user-avatar">
+                                {{ user.fullName.charAt(0).toUpperCase() }}
+                            </div>
+                            <div class="user-info">
+                                <h3>Name: {{ user.fullName }}</h3>
+                                <p>Username: {{ user.username }}</p>
+                                <div class="user-details">
+                                    <span class="user-role" [class]="'role-' + user.role.toLowerCase()">{{ user.role }}</span> 
+                                </div>
+                            </div>
+
+                            <div class="user-actions">
+                                <div class="join-date">Joined: {{ user.joinedDate }}</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            @else {
+                <p class="no-users">No active users found</p>
+            }
+        }
+    </div>
     }
 </div>

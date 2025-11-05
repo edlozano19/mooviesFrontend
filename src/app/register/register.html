@@ -1,1 +1,123 @@
-<p>register works!</p>
+<div class="form-container">
+    <div class="form-card">
+        <h1>Create Your Account</h1>
+        <p>Join Moovies to discover and share your favorite movies</p>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
+            @if (errorMessage()) {
+                <div class="alert alert-error">
+                    {{ errorMessage() }}
+                </div>
+            }
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                @if (isFieldInvalid('username')) {
+                    <div class="error-message">{{ getFieldError('username') }}</div>
+                }
+                <input
+                    type="text"
+                    id="username"
+                    formControlName="username"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('username')"
+                    placeholder="Enter your username"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                @if (isFieldInvalid('email')) {
+                    <div class="error-message">{{ getFieldError('email') }}</div>
+                }
+                <input
+                    type="email"
+                    id="email"
+                    formControlName="email"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('email')"
+                    placeholder="Enter your email"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                @if (isFieldInvalid('firstName')) {
+                    <div class="error-message">{{ getFieldError('firstName') }}</div>
+                }
+                <input
+                    type="text"
+                    id="firstName"
+                    formControlName="firstName"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('firstName')"
+                    placeholder="Enter your first name"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                @if (isFieldInvalid('lastName')) {
+                    <div class="error-message">{{ getFieldError('lastName') }}</div>
+                }
+                <input
+                    type="text"
+                    id="lastName"
+                    formControlName="lastName"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('lastName')"
+                    placeholder="Enter your last name"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                @if (isFieldInvalid('password')) {
+                    <div class="error-message"[innerHTML]="getFieldError('password')"></div>
+                }
+                <input
+                    type="password"
+                    id="password"
+                    formControlName="password"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('password')"
+                    placeholder="Enter your password"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                @if (isFieldInvalid('confirmPassword')) {
+                    <div class="error-message">{{ getFieldError('confirmPassword') }}</div>
+                }
+                @if (hasPasswordMismatch()) {
+                    <div class="error-message">Passwords do not match</div>
+                }
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    formControlName="confirmPassword"
+                    class="form-control"
+                    [class.error]="isFieldInvalid('confirmPassword')"
+                    placeholder="Confirm your password"
+                />
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-full"
+                [disabled]="isLoading()"
+            >
+                @if (isLoading()) {
+                    Creating Account...
+                }
+                @else {
+                    Create Account
+                }
+            </button>
+        </form>
+        <div class="form-footer">
+            <p>Already have an account? <a routerLink="/login">Login</a></p>
+        </div>
+    </div>
+</div>

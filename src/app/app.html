@@ -1,15 +1,33 @@
+<app-notifications></app-notifications>
+
 <div class="app">
   <nav class="navbar">
-    <div class="nav-brand">
-      <h2>Moovies</h2>
+    <div class="nav-left">
+      <div class="nav-brand">
+        <h2>Moovies</h2>
+      </div>
+
+      <div class="nav-main">
+        <a routerLink="/home" class="nav-link">Home</a>
+        <span class="nav-separator">|</span>
+        <a routerLink="/movies" class="nav-link">Movies</a>
+      </div>
+
+      <app-search-bar></app-search-bar>
     </div>
 
-    <div class="nav-links">
-      <a routerLink="/home" class="nav-link">Home</a>
-      <a routerLink="/movies" class="nav-link">Movies</a>
-      <a routerLink="/profile" class="nav-link">Profile</a>
-      <a routerLink="/login" class="nav-link">Login</a>
+    <div class="nav-right">
+      @if (!isLoggedIn()) {
       <a routerLink="/register" class="nav-link">Register</a>
+      <span class="nav-separator">|</span>
+      <a routerLink="/login" class="nav-link">Login</a>
+      }
+
+      @if (isLoggedIn()) {
+        <a routerLink="/profile" class="nav-link">Profile</a>
+        <span class="nav-separator">|</span>
+        <button (click)="logout()" class="nav-link">Logout</button>
+      }
     </div>
   </nav>
 

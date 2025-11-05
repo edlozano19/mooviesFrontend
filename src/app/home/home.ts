@@ -1,5 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Auth } from '../core/auth';
+import { NotificationService } from '../core/notification.service';
+import { UsersService } from '../core/users.service';
 
 @Component({
   selector: 'app-home',
@@ -8,32 +11,49 @@ import { Auth } from '../core/auth';
   styleUrl: './home.css'
 })
 export class Home implements OnInit {
-  welcomeMessage = signal(`Welcome to Moovies!`);
-  isLoggedIn = signal(false);
-  userName = signal<string | undefined>(undefined);
+  constructor(
+    private authService: Auth,
+    private usersService: UsersService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {}
 
-  constructor(private authService: Auth){}
-  
-  ngOnInit(): void {
-    this.updateWelcomeMessage();
-  }
+  isLoggedIn = computed(() => this.authService.getIsLoggedIn());
+  currentUser = computed(() => this.authService.getCurrentUser());
 
-  updateWelcomeMessage(): void {
-    const currentUser = this.authService.getCurrentUser();
-    this.isLoggedIn.set(this.authService.getIsLoggedIn());
-    
-    if (this.isLoggedIn() && currentUser) {
-      this.userName.set(`${currentUser.firstName} ${currentUser.lastName}`);
-      this.welcomeMessage.set(`Welcome back, ${currentUser.firstName}!`);
+  userName = computed(() => {
+    const user = this.currentUser();
+    return user ? `${user.firstName} ${user.lastName}` : undefined;
+  });
+
+  welcomeMessage = computed(() => {
+    const user = this.currentUser();
+    const loggedIn = this.isLoggedIn();
+
+    if (loggedIn && user) {
+      return `Welcome back, ${user.firstName}!`;
     }
     else {
-      this.userName.set(undefined);
-      this.welcomeMessage.set(`Welcome to Moovies!`);
+      return `Welcome to Moovies!`;
+    }
+  });
+
+  activeUsers = computed(() => this.usersService.getActiveUsersForDisplay());
+  activeUserCount = computed(() => this.usersService.activeUserCount());
+  isLoadingUsers = computed(() => this.usersService.getIsLoading());
+
+  ngOnInit(): void {
+    if (this.isLoggedIn()) {
+      this.usersService.refreshUsers();
     }
   }
 
   logout(): void {
-    this.authService.logout();
-    this.updateWelcomeMessage();
+    const confirmed = this.authService.confirmAndLogout();
+
+    if (confirmed) {
+      this.notificationService.success('You have been logged out successfully');
+      this.router.navigate(['/']);
+    }
   }
 }
