@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { UsersService } from './users.service';
 
 export interface User {
   id: number;
@@ -75,12 +76,14 @@ export class Auth {
   private authToken = signal<string | null>(null);
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private usersService: UsersService
+  ) {
     this.checkStoredAuth();
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    console.log('Login request:', credentials);
     return this.http.post<BackendLoginResponse>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(
         map((response: BackendLoginResponse) => {
@@ -149,6 +152,7 @@ export class Auth {
   }
 
   logout(): void {
+    console.log('logout');
     this.isLoggedIn.set(false);
     this.currentUser.set(undefined);
     this.authToken.set(null);
@@ -156,6 +160,20 @@ export class Auth {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
+
+    this.usersService.clearUsers();
+  }
+
+  confirmAndLogout(): boolean {
+    const confirmed = window.confirm('Are you sure you want to logout?');
+    console.log(confirmed);
+
+    if (confirmed) {
+      this.logout();
+      return true;
+    }
+
+    return false;
   }
 
   getIsLoggedIn() {

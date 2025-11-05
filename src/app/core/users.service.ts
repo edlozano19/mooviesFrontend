@@ -107,4 +107,10 @@ export class UsersService {
     clearError(): void {
         this.error.set(null);
     }
+
+    clearUsers(): void {
+        this.allUsers.set([]);
+        this.isLoading.set(false);
+        this.error.set(null);
+    }
 }

@@ -1,0 +1,89 @@
+<div class="movie-details-container">
+    @if (isLoading()) {
+        <div class="loading">
+            <p>Loading movie details...</p>
+        </div>
+    }
+    @else if (error()) {
+        <div class="error">
+            <p>{{ error() }}</p>
+            <button (click)="goBack()" class="btn-back">Go Back</button>
+        </div>
+    }
+    @else if (movie()) {
+        <div class="movie-details">
+            @if (getBackdropUrl(movie()!.backdropPath)) {
+                <div class="backdrop" [style.background-image]="'url(' + getBackdropUrl(movie()!.backdropPath) + ')'">
+                    <div class="backdrop-overlay"></div>
+                </div>
+            }
+
+            <div class="content">
+                <button (click)="goBack()" class="btn-back">← Back to Search</button>
+
+                <div class="movie-header">
+                    <div class="poster">
+                        <img [src]="getPosterUrl(movie()!.posterPath)" [alt]="movie()!.title">
+                    </div>
+
+                    <div class="info">
+                        <h1>{{ movie()!.title }}</h1>
+
+                        @if (movie()!.originalTitle && movie()!.originalTitle !== movie()!.title) {
+                            <p class="original-title">Original Title: {{ movie()!.originalTitle }}</p>
+                        }
+
+                        <div class="meta">
+                            <span class="release-date">{{ formatDate(movie()!.releaseDate) }}</span>
+                            <span class="separator">•</span>
+                            <span class="runtime">{{ formatRuntime(movie()!.runtime) }}</span>
+                            @if (movie()!.genres) {
+                                <span class="separator">•</span>
+                                <span class="genres">{{ movie()!.genres }}</span>
+                            }
+                        </div>
+
+                        <div class="ratings">
+                            @if (movie()!.averageRating) {
+                                <div class="rating-item">
+                                    <span class="rating-label">Average Rating:</span>
+                                    <span class="rating-value">{{ movie()!.averageRating }}/5</span>
+                                    <span class="vote-count">({{ movie()!.voteCount }} votes)</span>
+                                </div>
+                            }
+                            @else {
+                                <p>No ratings available</p>
+                            }
+
+                            @if (movie()!.userRating) {
+                                <div class="rating-item">
+                                    <span class="rating-label">Your Rating:</span>
+                                    <span class="rating-value">{{ movie()!.userRating!.rating }}/5</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="user-lists">
+                            @if(movie()!.onWatchList) {
+                                <span class="badge badge-watchlist">On Watch List</span>
+                            }
+                            @if(movie()!.onWatchedList) {
+                                <span class="badge badge-watched">On Watched List</span>
+                            }
+                        </div>
+
+                        @if (movie()!.overview) {
+                            <div class="overview">
+                                <h3>Overview</h3>
+                                <p>{{ movie()!.overview }}</p>
+                            </div>
+                        }
+                        @else {
+                            <p>No overview available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

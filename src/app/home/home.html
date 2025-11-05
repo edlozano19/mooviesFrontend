@@ -8,6 +8,7 @@
         <p>Please log in to access personalized features</p>
     }
 
+    @if (isLoggedIn()) {
     <div class="user-section">
         <h2>Active Users <span class="user-count">({{ activeUserCount() }})</span></h2>
 
@@ -42,4 +43,5 @@
             }
         }
     </div>
+    }
 </div>
