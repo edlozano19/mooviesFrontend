@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
-import { Observable, catchError, of, tap } from "rxjs";
+import { catchError, Observable, of, tap } from "rxjs";
 import { environment } from "../../environments/environment";
-import { MovieDetails, TMDBMovie, TMDBSearchResponse } from "./movie.interface";
+import { MovieDetails, TMDBMovie, TMDBSearchResponse, WatchedListItem, WatchListItem } from "./movie.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -90,5 +90,85 @@ export class MoviesService {
 
     clearError(): void {
         this.error.set(null);
+    }
+
+    addToWatchlist(tmdbId: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/movies/watchlist`, { tmdbId })
+            .pipe(
+                catchError(( error: HttpErrorResponse) => {
+                    console.error('Error adding to watchlist:', error);
+                    throw error;
+                })
+            );
+    }
+
+    removeFromWatchlist(tmdbId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/movies/watchlist/${tmdbId}`)
+            .pipe(
+                catchError(( error: HttpErrorResponse ) => {
+                    console.error('Error removing from watchlist:', error);
+                    throw error;
+                })
+            );
+    }
+
+    addToWatchedlist(tmdbId: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/movies/watched`, { tmdbId })
+            .pipe(
+                catchError(( error: HttpErrorResponse ) => {
+                    console.error('Error adding to watched list:', error);
+                    throw error;
+                }) 
+            );
+    }
+
+    removeFromWatchedlist(tmdbId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/movies/watched/${tmdbId}`)
+            .pipe(
+                catchError(( error: HttpErrorResponse ) => {
+                    console.error('Error removing from watched list:', error)
+                    throw error;
+                })
+            );
+    }
+
+    rateMovie(tmdbId: number, rating: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/movies/rate`, { tmdbId, rating })
+            .pipe(
+                catchError((error: HttpErrorResponse) => {
+                    console.error('Error rating movie:', error);
+                    throw error;
+                })
+            );
+    }
+
+    deleteRating(movieId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/movies/${movieId}/rating`)
+            .pipe(
+                catchError((error: HttpErrorResponse) => {
+                    console.error('Error deleting rating', error);
+                    throw error;
+                })
+            );
+    }
+
+    getWatchedList(): Observable<WatchedListItem[]> {
+        return this.http.get<WatchedListItem[]>(`${this.apiUrl}/movies/watched`)
+            .pipe(
+                catchError((error: HttpErrorResponse) => {
+                    console.error('Error fetching watched list:', error);
+                    throw error;
+                })
+            );
+    }
+
+    getWatchList(): Observable<WatchListItem[]> {
+        return this.http.get<WatchListItem[]>(`${this.apiUrl}/movies/watchlist`)
+            .pipe(
+                catchError((error: HttpErrorResponse) => {
+                    console.error('Error fetching watchlist:', error);
+                    throw error;
+                })
+            );
     }
 }
