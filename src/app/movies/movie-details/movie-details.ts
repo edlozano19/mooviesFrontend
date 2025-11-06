@@ -62,6 +62,7 @@ export class MovieDetailsComponent implements OnInit {
     }
 
     goBack(): void {
+        this.moviesService.clearSearch();
         this.router.navigate(['/movies']);
     }
 

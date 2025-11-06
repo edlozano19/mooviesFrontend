@@ -29,6 +29,7 @@ export class Home implements OnInit {
   welcomeMessage = computed(() => {
     const user = this.currentUser();
     const loggedIn = this.isLoggedIn();
+    console.log(user);
 
     if (loggedIn && user) {
       return `Welcome back, ${user.firstName}!`;
