@@ -234,7 +234,7 @@
   
   .form-control.error {
     border-color: #e53e3e;
-    background: rgba(255, 245, 245, 0.9);
+    background: rgba(255, 255, 255, 0.08);
   }
   
   .form-control.error:focus {

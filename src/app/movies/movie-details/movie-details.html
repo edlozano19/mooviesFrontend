@@ -43,24 +43,90 @@
                             }
                         </div>
 
-                        <div class="ratings">
+                        <div class="ratings-section">
+                            <h3>Ratings</h3>
+
                             @if (movie()!.averageRating) {
                                 <div class="rating-item">
                                     <span class="rating-label">Average Rating:</span>
-                                    <span class="rating-value">{{ movie()!.averageRating }}/5</span>
+                                    <app-star-rating
+                                        [rating]="movie()!.averageRating ?? 0"
+                                        [readonly]="true"
+                                        size="small"
+                                    ></app-star-rating>
                                     <span class="vote-count">({{ movie()!.voteCount }} votes)</span>
                                 </div>
                             }
                             @else {
-                                <p>No ratings available</p>
-                            }
-
-                            @if (movie()!.userRating) {
                                 <div class="rating-item">
-                                    <span class="rating-label">Your Rating:</span>
-                                    <span class="rating-value">{{ movie()!.userRating!.rating }}/5</span>
+                                    <span class="rating-label">No ratings yet</span>
                                 </div>
                             }
+
+                            <div class="rating-item user-rating-section">
+                                <span class="rating-label">Your Rating:</span>
+                                @if (movie()!.userRating) {
+                                    <div class="user-rating-display">
+                                        <app-star-rating
+                                            [rating]="movie()!.userRating!.rating"
+                                            (ratingChange)="onRatingChange($event)"
+                                            [readonly]="false"
+                                            size="medium"
+                                        ></app-star-rating>
+                                        <button (click)="deleteRating()" class="remove-rating-btn" title="Remove rating">
+                                            ×
+                                        </button>
+                                    </div>
+                                }
+                                @else {
+                                    <app-star-rating
+                                        [rating]="0"
+                                        (ratingChange)="onRatingChange($event)"
+                                        [readonly]="false"
+                                        size="medium"
+                                    ></app-star-rating>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button
+                                (click)="toggleWatchlist()"
+                                [class.active]="movie()!.onWatchList"
+                                class="action-btn watchlist-btn"
+                            >
+                                @if (movie()!.onWatchList) {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                    Remove from Watch List
+                                }
+                                @else {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                    Add to Watchlist
+                                }
+                            </button>
+                            <button
+                                (click)="toggleWatchedList()"
+                                [class.active]="movie()!.onWatchedList"
+                                class="action-btn watched-btn"
+                            >
+                                @if (movie()!.onWatchedList) {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                    </svg>
+                                    Unmark as Watched
+                                }
+                                @else {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    Mark as Watched
+                                }
+                            </button>
                         </div>
 
                         <div class="user-lists">
@@ -68,7 +134,7 @@
                                 <span class="badge badge-watchlist">On Watch List</span>
                             }
                             @if(movie()!.onWatchedList) {
-                                <span class="badge badge-watched">On Watched List</span>
+                                <span class="badge badge-watched">Watched</span>
                             }
                         </div>
 

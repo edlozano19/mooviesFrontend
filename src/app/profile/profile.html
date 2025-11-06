@@ -1,1 +1,115 @@
-<p>profile works!</p>
+<div class="profile-container">
+    @if (currentUser()) {
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ getInitials(currentUser()!.firstName, currentUser()!.lastName) }}
+            </div>
+            <div class="profile-info">
+                <h1>{{ currentUser()!.firstName }} {{ currentUser()!.lastName }}</h1>
+                <p class="username">@{{ currentUser()!.username }}</p>
+                <p class="email">{{ currentUser()!.email }}</p>
+                <span class="role-badge" [class]="'role-' + currentUser()!.role.toLowerCase()">
+                    {{ currentUser()!.role }}
+                </span>
+            </div>
+        </div>
+
+        <div class="movies-section">
+            <h2>My Watchlist</h2>
+
+            @if (isLoadingWatchlist()) {
+                <div class="loading">
+                    <p>Loading your watchlist...</p>
+                </div>
+            }
+            @else if (recentWatchlistMovies().length > 0) {
+                <div class="carousel-container">
+                    <button (click)="scrollLeft('watchlist-scroll')" class="scroll-btn scroll-btn-left" aria-label="Scroll left">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div id="watchlist-scroll" class="movies-scroll">
+                    @for( item of recentWatchlistMovies(); track item.id) {
+                        <a [routerLink]="['/movie', item.movie.tmdbId]" class="movie-card">
+                            <div class="movie-poster">
+                                <img [src]="getPosterUrl(item.movie.posterPath)" [alt]="item.movie.title" />
+                            </div>
+                            <div class="movie-info">
+                                <h3>{{ item.movie.title }}</h3>
+                                <p class="added-date">Added: {{ formatDate(item.addedAt) }}</p>
+                            </div>
+                        </a>
+                    }
+                    </div>
+                    <button (click)="scrollRight('watchlist-scroll')" class="scroll-btn scroll-btn-right" aria-label="Scroll right">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            }
+            @else {
+                <div class="no-movies">
+                    <p>Your watchlist is empty. Add movies to your watchlist to keep track of your favorite titles!</p>
+                    <a routerLink="/movies" class="browse-link">Browse Movies</a>
+                </div>
+            }
+        </div>
+
+        <div class="movies-section">
+            <h2>Recently Watched Movies</h2>
+
+            @if (isLoadingWatched()) {
+                <div class="loading">
+                    <p>Loading your watched movies...</p>
+                </div>
+            }
+            @else if (recentWatchedMovies().length > 0) {
+                <div class="carousel-container">
+                    <button (click)="scrollLeft('watched-scroll')" class="scroll-btn scroll-btn-left" aria-label="Scroll left">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <div id="watched-scroll" class="movies-scroll">
+                    @for (item of recentWatchedMovies(); track item.id) {
+                        <a [routerLink]="['/movie', item.movie.tmdbId]" class="watched-card">
+                            <div class="movie-poster">
+                                <img [src]="getPosterUrl(item.movie.posterPath)" [alt]="item.movie.title" />
+                                @if (item.userRating) {
+                                    <div class="rating-overlay">
+                                        ⭐ {{ item.userRating.rating }}
+                                    </div>
+                                }
+                            </div>
+                            <div class="movie-info">
+                                <h3>{{ item.movie.title }}</h3>
+                            </div>
+                        </a>
+                    }
+                    </div>
+                    
+                    <button (click)="scrollRight('watched-scroll')" class="scroll-btn scroll-btn-right" aria-label="Scroll right">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            }
+            @else {
+                <div class="no-movies">
+                    <p>You haven't watched any movies yet. Explore the catalog and start watching!</p>
+                    <a routerLink="/movies" class="browse-link">Brose Movies</a>
+                </div>
+            }
+        </div>
+    }
+    @else {
+        <div class="not-logged-in">
+            <p>Please log in to view your profile</p>
+            <a routerLink="/login" class="login-link">Go to Login</a>
+        </div>
+    }
+</div>

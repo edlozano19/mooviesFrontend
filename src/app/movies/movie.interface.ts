@@ -70,3 +70,16 @@ export interface AddToWatchedListRequest {
     tmdbId: number;
 }
 
+export interface WatchedListItem {
+    id: number;
+    movie: MovieSummary;
+    addedAt: string;
+    userRating: UserRating | null;
+}
+
+export interface WatchListItem {
+    id: number;
+    movie: MovieSummary;
+    addedAt: string;
+}
+
